@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: desafio-backend
+    env: python
+    rootDir: desafio-backend
+    plan: free
+    autoDeploy: true
+
+    buildCommand: pip install -r ../requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: DB_DIR
+        value: /opt/data
+
+    disk:
+      name: carts-data
+      mountPath: /opt/data
+      sizeGB: 1
+
