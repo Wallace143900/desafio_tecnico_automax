@@ -46,7 +46,7 @@ const CartForm: React.FC<Props> = ({ onCreated, setGlobalLoading }) => {
 
       <div className="grid">
         <label className="field">
-          <span>User ID</span>
+          <span>Usuario (ID)</span>
           <input
             type="number"
             value={userId}
@@ -56,7 +56,7 @@ const CartForm: React.FC<Props> = ({ onCreated, setGlobalLoading }) => {
         </label>
 
         <label className="field">
-          <span>Data (opcional)</span>
+          <span>Data do carrinho (opcional)</span>
           <input
             type="datetime-local"
             value={date}
@@ -74,7 +74,7 @@ const CartForm: React.FC<Props> = ({ onCreated, setGlobalLoading }) => {
         {products.map((p, idx) => (
           <div key={idx} className="product-row">
             <label className="field small">
-              <span>productId</span>
+              <span>ID do produto</span>
               <input
                 type="number"
                 value={p.productId}
@@ -83,7 +83,7 @@ const CartForm: React.FC<Props> = ({ onCreated, setGlobalLoading }) => {
               />
             </label>
             <label className="field small">
-              <span>quantity</span>
+              <span>Quantidade</span>
               <input
                 type="number"
                 value={p.quantity}
@@ -105,7 +105,7 @@ const CartForm: React.FC<Props> = ({ onCreated, setGlobalLoading }) => {
       </div>
 
       <div className="actions">
-        <button type="submit" className="btn primary">Criar carrinho</button>
+        <button type="submit" className="btn primary">Adicionar carrinho</button>
       </div>
     </form>
   );

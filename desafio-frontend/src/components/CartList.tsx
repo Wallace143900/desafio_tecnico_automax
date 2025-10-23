@@ -94,13 +94,13 @@ const CartList: React.FC<Props> = ({ setGlobalLoading, reloadKey = 0 }) => {
       <div className="filters" style={{ margin: '6px 0 10px' }}>
         <div className="product-row">
           <label className="field small">
-            <span>User ID</span>
+            <span>Usuario (ID)</span>
             <input
               type="number"
               min={1}
               value={fUserId}
               onChange={(e) => setFUserId(e.target.value)}
-              placeholder="ex.: 5"
+              placeholder="Ex.: 5"
             />
           </label>
           <label className="field">
@@ -112,8 +112,8 @@ const CartList: React.FC<Props> = ({ setGlobalLoading, reloadKey = 0 }) => {
             <input type="datetime-local" value={fEnd} onChange={(e) => setFEnd(e.target.value)} />
           </label>
           <div className="actions end">
-            <button className="btn" onClick={() => load(true)}>Aplicar filtros</button>
-            <button className="btn ghost" onClick={() => { setFUserId(""); setFStart(""); setFEnd(""); load(true); }}>Limpar</button>
+            <button className="btn" onClick={() => load(true)}>Filtrar</button>
+            <button className="btn ghost" onClick={() => { setFUserId(""); setFStart(""); setFEnd(""); load(true); }}>Limpar filtros</button>
           </div>
         </div>
       </div>
