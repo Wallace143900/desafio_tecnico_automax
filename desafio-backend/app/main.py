@@ -1,15 +1,43 @@
-from fastapi import FastAPI
-from .database import engine, Base
+from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+
+from .database import engine, Base, SessionLocal
 from .routers import carts
-from .models import Cart
 from .errors.middleware import ExceptionMiddleware
+from .services import fetch_and_store_carts
 
 app = FastAPI(title="Automax Cart API")
 
+
 Base.metadata.create_all(bind=engine)
 
-Cart.metadata.create_all(bind=engine)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", 
+                   "https://desafio-frontend-alpha.vercel.app/"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 app.include_router(carts.router)
 
+
 app.add_middleware(ExceptionMiddleware)
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@app.post("/sync", tags=["sync"])
+def sync_carts(db: Session = Depends(get_db)):
+    fetch_and_store_carts(db)
+    return {"status": "ok", "message": "Carts sincronizados"}

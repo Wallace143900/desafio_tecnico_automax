@@ -5,7 +5,8 @@ from .database import Base
 
 class Cart(Base):
     __tablename__ = "carts"
+
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, index=True)
-    date = Column(DateTime, default=func.now())
-    products = Column(JSON)
+    date = Column(DateTime, server_default=func.now())
+    products = Column(JSON, nullable=False, default=[])
