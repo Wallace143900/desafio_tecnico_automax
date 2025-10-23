@@ -91,22 +91,30 @@ const CartList: React.FC<Props> = ({ setGlobalLoading, reloadKey = 0 }) => {
         <h2>Lista de Carrinhos</h2>
       </div>
 
-      <div className="filters" style={{ display: 'flex', gap: 12, margin: '8px 0', alignItems: 'end', flexWrap: 'wrap' }}>
-        <div>
-          <label>User ID</label>
-          <input type="number" min={1} value={fUserId} onChange={(e) => setFUserId(e.target.value)} placeholder="ex.: 5" />
-        </div>
-        <div>
-          <label>Data inicial</label>
-          <input type="datetime-local" value={fStart} onChange={(e) => setFStart(e.target.value)} />
-        </div>
-        <div>
-          <label>Data final</label>
-          <input type="datetime-local" value={fEnd} onChange={(e) => setFEnd(e.target.value)} />
-        </div>
-        <div>
-          <button onClick={() => load(true)}>Aplicar filtros</button>
-          <button style={{ marginLeft: 8 }} onClick={() => { setFUserId(""); setFStart(""); setFEnd(""); load(true); }}>Limpar</button>
+      <div className="filters" style={{ margin: '6px 0 10px' }}>
+        <div className="product-row">
+          <label className="field small">
+            <span>User ID</span>
+            <input
+              type="number"
+              min={1}
+              value={fUserId}
+              onChange={(e) => setFUserId(e.target.value)}
+              placeholder="ex.: 5"
+            />
+          </label>
+          <label className="field">
+            <span>Data inicial</span>
+            <input type="datetime-local" value={fStart} onChange={(e) => setFStart(e.target.value)} />
+          </label>
+          <label className="field">
+            <span>Data final</span>
+            <input type="datetime-local" value={fEnd} onChange={(e) => setFEnd(e.target.value)} />
+          </label>
+          <div className="actions end">
+            <button className="btn" onClick={() => load(true)}>Aplicar filtros</button>
+            <button className="btn ghost" onClick={() => { setFUserId(""); setFStart(""); setFEnd(""); load(true); }}>Limpar</button>
+          </div>
         </div>
       </div>
 
