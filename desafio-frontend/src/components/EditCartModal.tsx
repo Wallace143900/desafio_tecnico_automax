@@ -57,11 +57,11 @@ const EditCartModal: React.FC<Props> = ({ open, cart, onClose, onSaved, setGloba
         <form onSubmit={save}>
           <div className="grid">
             <label className="field">
-              <span>User ID</span>
+              <span>Usuario (ID)</span>
               <input type="number" min={1} value={userId} onChange={(e) => setUserId(Number(e.target.value))} />
             </label>
             <label className="field">
-              <span>Data</span>
+              <span>Data do carrinho</span>
               <input type="datetime-local" value={date} onChange={(e) => setDate(e.target.value)} />
             </label>
           </div>
@@ -75,7 +75,7 @@ const EditCartModal: React.FC<Props> = ({ open, cart, onClose, onSaved, setGloba
             {products.map((p, idx) => (
               <div key={idx} className="product-row">
                 <label className="field small">
-                  <span>productId</span>
+                  <span>ID do produto</span>
                   <input
                     type="number"
                     value={p.productId}
@@ -84,7 +84,7 @@ const EditCartModal: React.FC<Props> = ({ open, cart, onClose, onSaved, setGloba
                   />
                 </label>
                 <label className="field small">
-                  <span>quantity</span>
+                  <span>Quantidade</span>
                   <input
                     type="number"
                     value={p.quantity}
