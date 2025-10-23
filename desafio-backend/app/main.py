@@ -14,20 +14,27 @@ app = FastAPI(title="Automax Cart API")
 Base.metadata.create_all(bind=engine)
 
 
+# CORS: allow specific origins by default; support wildcard via env
 default_origins = [
     "http://localhost:5173",
     "https://desafio-frontend-alpha.vercel.app",
 ]
-extra_origins = os.getenv("ALLOWED_ORIGINS", "")
-if extra_origins:
-    default_origins += [o.strip().rstrip("/") for o in extra_origins.split(",") if o.strip()]
+env_origins = os.getenv("ALLOWED_ORIGINS", "")
+if env_origins:
+    default_origins += [o.strip().rstrip("/") for o in env_origins.split(",") if o.strip()]
 
-normalized_origins = [o.rstrip("/") for o in default_origins]
+use_wildcard = any(o == "*" for o in default_origins)
+if use_wildcard:
+    cors_allow_origins = ["*"]
+    cors_allow_credentials = False  # required when using '*'
+else:
+    cors_allow_origins = [o.rstrip("/") for o in default_origins]
+    cors_allow_credentials = True
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=normalized_origins,
-    allow_credentials=True,
+    allow_origins=cors_allow_origins,
+    allow_credentials=cors_allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
