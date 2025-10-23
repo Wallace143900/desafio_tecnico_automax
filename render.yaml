@@ -16,6 +16,8 @@ services:
         fromDatabase:
           name: desafio-postgres
           property: connectionString
+      - key: ALLOWED_ORIGINS
+        value: "*"
 
 databases:
   - name: desafio-postgres
