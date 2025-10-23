@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
+from datetime import datetime
 
 from .. import crud, schemas
 from ..database import SessionLocal
@@ -28,8 +29,13 @@ def map_products(products):
 
 
 @router.get("/", response_model=List[schemas.Cart])
-def read_carts(db: Session = Depends(get_db)):
-    carts = crud.get_carts(db)
+def read_carts(
+    db: Session = Depends(get_db),
+    user_id: Optional[int] = Query(default=None),
+    start_date: Optional[datetime] = Query(default=None),
+    end_date: Optional[datetime] = Query(default=None),
+):
+    carts = crud.get_carts(db, user_id=user_id, start_date=start_date, end_date=end_date)
     for c in carts:
         c.products = map_products(c.products)
     return carts

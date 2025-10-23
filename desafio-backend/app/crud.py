@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+from typing import List, Optional
+from datetime import datetime
 from . import models, schemas
 
 
@@ -6,8 +8,22 @@ def get_cart(db: Session, cart_id: int):
     return db.query(models.Cart).filter(models.Cart.id == cart_id).first()
 
 
-def get_carts(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Cart).offset(skip).limit(limit).all()
+def get_carts(
+    db: Session,
+    skip: int = 0,
+    limit: int = 100,
+    user_id: Optional[int] = None,
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
+) -> List[models.Cart]:
+    q = db.query(models.Cart)
+    if user_id is not None:
+        q = q.filter(models.Cart.user_id == user_id)
+    if start_date is not None:
+        q = q.filter(models.Cart.date >= start_date)
+    if end_date is not None:
+        q = q.filter(models.Cart.date <= end_date)
+    return q.offset(skip).limit(limit).all()
 
 
 def create_cart(db: Session, cart: schemas.CartCreate):

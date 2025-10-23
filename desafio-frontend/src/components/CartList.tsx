@@ -14,6 +14,11 @@ const CartList: React.FC<Props> = ({ setGlobalLoading, reloadKey = 0 }) => {
   const [carts, setCarts] = useState<Cart[]>([]);
   const [initialLoading, setInitialLoading] = useState(true);
 
+  // filtros
+  const [fUserId, setFUserId] = useState<string>("");
+  const [fStart, setFStart] = useState<string>("");
+  const [fEnd, setFEnd] = useState<string>("");
+
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [expandedCart, setExpandedCart] = useState<Cart | null>(null);
   const [expanding, setExpanding] = useState(false);
@@ -23,7 +28,11 @@ const CartList: React.FC<Props> = ({ setGlobalLoading, reloadKey = 0 }) => {
 
   const load = async (withOverlay = true) => {
     if (withOverlay) setGlobalLoading(true, "Carregando carrinhos...");
-    const [data] = await Promise.all([getCarts(), delay(600)]);
+    const query: any = {};
+    if (fUserId.trim() !== "") query.user_id = Number(fUserId);
+    if (fStart) query.start_date = new Date(fStart).toISOString();
+    if (fEnd) query.end_date = new Date(fEnd).toISOString();
+    const [data] = await Promise.all([getCarts(query), delay(600)]);
     setCarts(data);
     setInitialLoading(false);
     if (withOverlay) setGlobalLoading(false);
@@ -31,7 +40,7 @@ const CartList: React.FC<Props> = ({ setGlobalLoading, reloadKey = 0 }) => {
 
   useEffect(() => {
     load(true);
-  }, []);
+  }, [fUserId, fStart, fEnd]);
 
   useEffect(() => {
     if (reloadKey > 0) load(false);
@@ -80,6 +89,25 @@ const CartList: React.FC<Props> = ({ setGlobalLoading, reloadKey = 0 }) => {
     <div className="card card-elevated">
       <div className="card-head">
         <h2>Lista de Carrinhos</h2>
+      </div>
+
+      <div className="filters" style={{ display: 'flex', gap: 12, margin: '8px 0', alignItems: 'end', flexWrap: 'wrap' }}>
+        <div>
+          <label>User ID</label>
+          <input type="number" min={1} value={fUserId} onChange={(e) => setFUserId(e.target.value)} placeholder="ex.: 5" />
+        </div>
+        <div>
+          <label>Data inicial</label>
+          <input type="datetime-local" value={fStart} onChange={(e) => setFStart(e.target.value)} />
+        </div>
+        <div>
+          <label>Data final</label>
+          <input type="datetime-local" value={fEnd} onChange={(e) => setFEnd(e.target.value)} />
+        </div>
+        <div>
+          <button onClick={() => load(true)}>Aplicar filtros</button>
+          <button style={{ marginLeft: 8 }} onClick={() => { setFUserId(""); setFStart(""); setFEnd(""); load(true); }}>Limpar</button>
+        </div>
       </div>
 
       <div className="table-wrap">

@@ -1,4 +1,5 @@
 import os
+import asyncio
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -68,3 +69,40 @@ def root():
 @app.get("/healthz")
 def healthz():
     return {"ok": True}
+
+
+# Scheduler simples (opcional) para sincronizar periodicamente
+_scheduler_task: asyncio.Task | None = None
+
+
+async def _scheduler_loop(interval_minutes: int):
+    while True:
+        try:
+            db = next(get_db())  # abre sessão
+            fetch_and_store_carts(db)
+        except Exception:
+            pass
+        finally:
+            try:
+                db.close()
+            except Exception:
+                pass
+        await asyncio.sleep(max(1, interval_minutes) * 60)
+
+
+@app.on_event("startup")
+async def _maybe_start_scheduler():
+    global _scheduler_task
+    try:
+        interval = int(os.getenv("SYNC_INTERVAL_MINUTES", "0"))
+    except ValueError:
+        interval = 0
+    if interval > 0 and _scheduler_task is None:
+        _scheduler_task = asyncio.create_task(_scheduler_loop(interval))
+
+
+@app.on_event("shutdown")
+async def _stop_scheduler():
+    global _scheduler_task
+    if _scheduler_task and not _scheduler_task.done():
+        _scheduler_task.cancel()

@@ -3,9 +3,9 @@ import type { Cart } from "../types/cart";
 
 const API_URL = `${import.meta.env.VITE_API_BASE}/carts`;
 
-export const getCarts = async (): Promise<Cart[]> => {
+export const getCarts = async (params?: { user_id?: number; start_date?: string; end_date?: string }): Promise<Cart[]> => {
   try {
-    const { data } = await axios.get<Cart[]>(API_URL);
+    const { data } = await axios.get<Cart[]>(API_URL, { params });
     return data;
   } catch (error) {
     console.error("Erro ao buscar carrinhos:", error);
