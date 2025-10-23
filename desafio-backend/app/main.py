@@ -41,3 +41,13 @@ def get_db():
 def sync_carts(db: Session = Depends(get_db)):
     fetch_and_store_carts(db)
     return {"status": "ok", "message": "Carts sincronizados"}
+
+
+@app.get("/")
+def root():
+    return {"status": "ok", "service": "Automax Cart API"}
+
+
+@app.get("/healthz")
+def healthz():
+    return {"ok": True}
