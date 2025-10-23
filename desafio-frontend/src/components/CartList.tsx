@@ -15,9 +15,12 @@ const CartList: React.FC<Props> = ({ setGlobalLoading, reloadKey = 0 }) => {
   const [initialLoading, setInitialLoading] = useState(true);
 
   // filtros
+  const [fId, setFId] = useState<string>("");
   const [fUserId, setFUserId] = useState<string>("");
   const [fStart, setFStart] = useState<string>("");
   const [fEnd, setFEnd] = useState<string>("");
+  const [fQtyMin, setFQtyMin] = useState<string>("");
+  const [fQtyMax, setFQtyMax] = useState<string>("");
 
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [expandedCart, setExpandedCart] = useState<Cart | null>(null);
@@ -33,14 +36,32 @@ const CartList: React.FC<Props> = ({ setGlobalLoading, reloadKey = 0 }) => {
     if (fStart) query.start_date = new Date(fStart).toISOString();
     if (fEnd) query.end_date = new Date(fEnd).toISOString();
     const [data] = await Promise.all([getCarts(query), delay(600)]);
-    setCarts(data);
+
+    // filtros locais (id e quantidade total)
+    let list = data;
+    if (fId.trim() !== "") {
+      const id = Number(fId);
+      if (!Number.isNaN(id)) list = list.filter((c) => c.id === id);
+    }
+    const minQ = fQtyMin.trim() !== "" ? Number(fQtyMin) : undefined;
+    const maxQ = fQtyMax.trim() !== "" ? Number(fQtyMax) : undefined;
+    if (minQ !== undefined || maxQ !== undefined) {
+      list = list.filter((c) => {
+        const total = (c.products ?? []).reduce((s, p) => s + (p.quantity || 0), 0);
+        if (minQ !== undefined && total < minQ) return false;
+        if (maxQ !== undefined && total > maxQ) return false;
+        return true;
+      });
+    }
+
+    setCarts(list);
     setInitialLoading(false);
     if (withOverlay) setGlobalLoading(false);
   };
 
   useEffect(() => {
     load(true);
-  }, [fUserId, fStart, fEnd]);
+  }, []);
 
   useEffect(() => {
     if (reloadKey > 0) load(false);
@@ -94,6 +115,16 @@ const CartList: React.FC<Props> = ({ setGlobalLoading, reloadKey = 0 }) => {
       <div className="filters" style={{ margin: '6px 0 10px' }}>
         <div className="product-row">
           <label className="field small">
+            <span>ID</span>
+            <input
+              type="number"
+              min={1}
+              value={fId}
+              onChange={(e) => setFId(e.target.value)}
+              placeholder="Ex.: 10"
+            />
+          </label>
+          <label className="field small">
             <span>Usuario (ID)</span>
             <input
               type="number"
@@ -111,9 +142,29 @@ const CartList: React.FC<Props> = ({ setGlobalLoading, reloadKey = 0 }) => {
             <span>Data final</span>
             <input type="datetime-local" value={fEnd} onChange={(e) => setFEnd(e.target.value)} />
           </label>
+          <label className="field small">
+            <span>Qtd min</span>
+            <input
+              type="number"
+              min={0}
+              value={fQtyMin}
+              onChange={(e) => setFQtyMin(e.target.value)}
+              placeholder="0"
+            />
+          </label>
+          <label className="field small">
+            <span>Qtd max</span>
+            <input
+              type="number"
+              min={0}
+              value={fQtyMax}
+              onChange={(e) => setFQtyMax(e.target.value)}
+              placeholder="∞"
+            />
+          </label>
           <div className="actions end">
             <button className="btn" onClick={() => load(true)}>Filtrar</button>
-            <button className="btn ghost" onClick={() => { setFUserId(""); setFStart(""); setFEnd(""); load(true); }}>Limpar filtros</button>
+            <button className="btn ghost" onClick={() => { setFId(""); setFUserId(""); setFStart(""); setFEnd(""); setFQtyMin(""); setFQtyMax(""); load(true); }}>Limpar filtros</button>
           </div>
         </div>
       </div>
@@ -124,7 +175,7 @@ const CartList: React.FC<Props> = ({ setGlobalLoading, reloadKey = 0 }) => {
             <tr>
               <th>ID</th>
               <th>Data</th>
-              <th>User</th>
+              <th>Usuario</th>
               <th>Qtd Total</th>
               <th className="col-actions">Ações</th>
             </tr>
