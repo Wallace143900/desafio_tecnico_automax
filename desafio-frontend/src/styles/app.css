@@ -93,6 +93,13 @@ h2, h3 { margin: 0 0 10px 0; }
 .product-row{ display:flex; gap:12px; align-items:end; margin-bottom:8px; flex-wrap:wrap; }
 .field.small { width: 160px; }
 
+/* Filtros: herdam o mesmo visual do formulario */
+.filters{ margin-top: 8px; padding-top: 10px; border-top: 1px dashed var(--border); }
+.filters .product-row{ margin-bottom: 0; }
+.filters .actions.end{ margin-left: auto; }
+.filters .field input{ background: var(--panel-2); color: var(--text); border: 1px solid var(--border); padding: 10px 12px; border-radius: 10px; }
+.filters .field input:focus{ border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,140,255,.15); }
+
 .actions{ margin-top: 12px; display:flex; gap:10px; }
 .actions.end{width: 100%; justify-content:flex-end; }
 
